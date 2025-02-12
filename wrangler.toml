@@ -1,0 +1,8 @@
+name = "s3ctt-r00m"
+type = "javascript"
+
+[env.production]
+compatibility_date = "2025-02-12"
+
+[build]
+command = "npx wrangler deploy worker.js"
