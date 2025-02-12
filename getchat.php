@@ -1,33 +1,21 @@
 <?php
-// GitHub repository details
-$repoOwner = 'apryasadathalisappi';
-$repoName = 's3ctt-r00m';
-$folderPath = 'RoomChat';
-
-// GitHub API URL
-$apiUrl = "https://api.github.com/repos/$repoOwner/$repoName/contents/$folderPath";
-
-// Personal access token
-$accessToken = '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';
-
-// Get the room code from the request
+$githubRepo = "apryasadathalisappi/s3ctt-r00m";
 $roomCode = $_GET['room'];
+$githubToken = "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";
+$filename = "RoomChat/$roomCode.json";
+$githubApiUrl = "https://api.github.com/repos/$githubRepo/contents/$filename";
 
-// Fetch the room file
-$ch = curl_init("$apiUrl/$roomCode.json");
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    'User-Agent: PHP Script',
-    'Authorization: token ' . $accessToken
-]);
-$response = curl_exec($ch);
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $githubApiUrl);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($ch, CURLOPT_USERAGENT, "PHP");
+curl_setopt($ch, CURLOPT_HTTPHEADER, ["Authorization: token $githubToken"]);
+$response = json_decode(curl_exec($ch), true);
 curl_close($ch);
 
-$fileData = json_decode($response, true);
-if (isset($fileData['content'])) {
-    $content = base64_decode($fileData['content']);
-    echo $content;
+if (isset($response['content'])) {
+    echo base64_decode($response['content']);
 } else {
-    echo json_encode(['status' => 'false']);
+    echo json_encode(["error" => "Room not found"]);
 }
 ?>
